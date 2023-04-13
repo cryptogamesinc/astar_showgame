@@ -61,6 +61,8 @@ pub struct MultiAssetData {
     /// Catalog assigned to assetId. Added with add_asset_entry
     /// An asset can also have None as a catalog, hence the Option
     pub asset_catalog_address: Mapping<AssetId, Option<AccountId>>,
+
+    pub asset_status: Mapping<Id, Status>,
 }
 
 impl<T> MultiAsset for T
@@ -71,6 +73,88 @@ where
         + Utils,
 {
     /// Used to add a asset entry.
+    /// 
+    fn set_status (
+        &mut self,
+        token_id: Id, 
+        hungry: u32,
+        health: u32,
+        happy: u32
+    ) -> Result<()>{ 
+        self.ensure_exists_and_get_owner(&token_id)?;
+        self.data::<MultiAssetData>()
+            .asset_status
+            .insert(
+                token_id,
+                &Status {
+                    hungry,
+                    health,
+                    happy,
+                },
+            );
+        Ok(())
+    }
+    
+    fn set_full_status(&mut self, token_id: Id) -> Result<()> {
+        self.set_status(token_id, 0, 100, 100)
+    }
+
+    fn set_death_status(&mut self, token_id: Id) -> Result<()> {
+        self.set_status(token_id, 80, 0, 0)
+    }
+
+    /// Used to retrieve Status
+    fn get_status(&self, token_id: Id) -> Option<Status> {
+        self.data::<MultiAssetData>()
+            .asset_status
+            .get(token_id)
+    }
+
+    fn add_twenty(&mut self, token_id: Id) -> Result<()> {
+        let original_status = self.get_status(token_id.clone()).unwrap_or_else(|| {
+            // In case the token_id doesn't exist in the asset_status map, we just return a default status with all fields set to 0.
+            Status { hungry: 0, health: 0, happy: 0 }
+        });
+    
+        let new_status = Status {
+            hungry: original_status.hungry + 20,
+            health: original_status.health + 20,
+            happy: original_status.happy + 20,
+        };
+    
+        self.data::<MultiAssetData>()
+            .asset_status
+            .insert(token_id, &new_status);
+        Ok(())
+    }
+
+    fn change_some_status(&mut self, token_id: Id, number: u32) -> Result<()> {
+        let original_status = self.get_status(token_id.clone()).unwrap_or_else(|| {
+            // In case the token_id doesn't exist in the asset_status map, we just return a default status with all fields set to 0.
+            Status { hungry: 0, health: 0, happy: 0 }
+        });
+    
+        let new_status = Status {
+            hungry: original_status.hungry - number,
+            health: original_status.health + number,
+            happy: original_status.happy + number,
+        };
+    
+        self.data::<MultiAssetData>()
+            .asset_status
+            .insert(token_id, &new_status);
+        Ok(())
+    }
+
+    fn set_lucky_status(&mut self, token_id: Id) -> Result<()> {
+        self.change_some_status(token_id.clone(),50)
+    }
+    
+
+
+    
+
+    //  Used to add a asset entry.
     #[modifiers(only_role(CONTRIBUTOR))]
     fn add_asset_entry(
         &mut self,

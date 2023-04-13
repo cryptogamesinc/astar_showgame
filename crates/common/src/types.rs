@@ -88,3 +88,17 @@ pub struct Equipment {
     // child_id: The (Address of the collection, token ID) of token that is equipped
     pub child_nft: ChildNft,
 }
+
+#[derive(scale::Encode, scale::Decode, Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "std",
+    derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+)]
+pub struct Status {
+
+    pub hungry: u32,
+
+    pub health: u32,
+
+    pub happy: u32,
+}

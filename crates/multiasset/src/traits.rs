@@ -19,6 +19,37 @@ pub type MultiAssetRef = dyn MultiAsset;
 /// Trait definitions for MultiAsset ink! messages
 #[openbrush::trait_definition]
 pub trait MultiAsset {
+    
+    #[ink(message)]
+    fn set_status(
+        &mut self,
+        token_id: Id, 
+        hungry: u32,
+        health: u32,
+        happy: u32
+    ) -> Result<()>;
+
+    #[ink(message)]
+    fn set_full_status(&mut self, token_id: Id) -> Result<()>;
+
+    #[ink(message)]
+    fn set_death_status(&mut self, token_id: Id) -> Result<()>;
+
+    #[ink(message)]
+    fn set_lucky_status(&mut self, token_id: Id) -> Result<()>;
+
+    #[ink(message)]
+    fn get_status(&self, token_id: Id) -> Option<Status>;
+
+    #[ink(message)]
+    fn add_twenty(&mut self, token_id: Id) -> Result<()>;
+
+    #[ink(message)]
+    fn change_some_status(&mut self, token_id: Id, number:u32) -> Result<()>;
+
+    // #[ink(message)]
+    // fn test2(&mut self, token_id: Id) -> Result<()>;
+
     /// Used to add a asset entry.
     /// The ID of the asset is automatically assigned to be the next available asset ID.
     /// # Arguments

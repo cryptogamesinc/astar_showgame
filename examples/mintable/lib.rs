@@ -14,6 +14,7 @@ pub mod rmrk_example_mintable {
             psp34::extensions::{
                 enumerable::*,
                 metadata::*,
+                mintable::*
             },
             reentrancy_guard::*,
         },
@@ -76,6 +77,8 @@ pub mod rmrk_example_mintable {
     impl PSP34Metadata for Rmrk {}
 
     impl PSP34Enumerable for Rmrk {}
+
+    impl PSP34Mintable for Rmrk {}
 
     impl Minting for Rmrk {}
 
