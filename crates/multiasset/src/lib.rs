@@ -128,6 +128,7 @@ where
         Ok(())
     }
 
+    // to change some status
     fn change_some_status(&mut self, token_id: Id, number: u32) -> Result<()> {
         let original_status = self.get_status(token_id.clone()).unwrap_or_else(|| {
             // In case the token_id doesn't exist in the asset_status map, we just return a default status with all fields set to 0.
