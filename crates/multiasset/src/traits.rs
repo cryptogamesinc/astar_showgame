@@ -47,6 +47,28 @@ pub trait MultiAsset {
     #[ink(message)]
     fn change_some_status(&mut self, token_id: Id, number:u32) -> Result<()>;
 
+    // 3 tyepes of uri function
+    // 1) normal uri
+    #[ink(message)]
+    fn set_normal_uri(&mut self, normal_uri: String) -> Result<()>;
+
+    #[ink(message)]
+    fn get_normal_uri(&self) -> String;
+
+    // 2) good uri
+    #[ink(message)]
+    fn set_good_uri(&mut self, good_uri: String) -> Result<()>;
+
+    #[ink(message)]
+    fn get_good_uri(&self) -> String;
+
+    // 3) bad uri
+    #[ink(message)]
+    fn set_bad_uri(&mut self, bad_uri: String) -> Result<()>;
+
+    #[ink(message)]
+    fn get_bad_uri(&self) -> String;
+
     // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;
 

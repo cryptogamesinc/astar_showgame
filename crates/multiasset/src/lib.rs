@@ -63,6 +63,11 @@ pub struct MultiAssetData {
     pub asset_catalog_address: Mapping<AssetId, Option<AccountId>>,
 
     pub asset_status: Mapping<Id, Status>,
+
+    // this is three pattern uri
+    pub normal_uri: String,
+    pub good_uri: String,
+    pub bad_uri: String
 }
 
 impl<T> MultiAsset for T
@@ -151,6 +156,42 @@ where
         self.change_some_status(token_id.clone(),50)
     }
     
+    // 3 tyepes of uri function
+    // 1) normal uri
+    fn set_normal_uri(&mut self, normal_uri:String) -> Result<()>{
+        self.data::<MultiAssetData>()
+        .normal_uri = normal_uri;
+        Ok(())
+    }
+
+    fn get_normal_uri(&self) -> String {
+        self.data::<MultiAssetData>()
+            .normal_uri.clone()
+    }
+
+    // 2) good uri
+    fn set_good_uri(&mut self, normal_uri:String) -> Result<()>{
+        self.data::<MultiAssetData>()
+        .normal_uri = normal_uri;
+        Ok(())
+    }
+
+    fn get_good_uri(&self) -> String {
+        self.data::<MultiAssetData>()
+            .normal_uri.clone()
+    }
+
+    // 3) bad uri
+    fn set_bad_uri(&mut self, normal_uri:String) -> Result<()>{
+        self.data::<MultiAssetData>()
+        .normal_uri = normal_uri;
+        Ok(())
+    }
+
+    fn get_bad_uri(&self) -> String {
+        self.data::<MultiAssetData>()
+            .normal_uri.clone()
+    }
 
 
     
