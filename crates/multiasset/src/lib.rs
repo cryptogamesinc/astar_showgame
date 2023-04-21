@@ -6,6 +6,8 @@
 pub mod internal;
 pub mod traits;
 
+use core::time::Duration;
+
 use internal::Internal;
 
 use rmrk_common::{
@@ -251,10 +253,8 @@ where
     }
 
     fn eat_an_apple(&mut self, token_id: Id) -> Result<()> {
-
         // ランダム性は後から追加
         let random = 0;
-
         if random == 0{
             self.change_some_status(token_id, 30)
         } else if random == 1{
@@ -265,6 +265,22 @@ where
             self.set_lucky_status(token_id)
         } 
     }
+
+    fn has_passed(&self, check_time :u64, last_time :u64) -> bool{
+        let current_time = Self::env().block_timestamp();
+        let time_since_last_time = current_time - last_time;
+        let duration_time = Duration::from_secs(check_time);
+        if Duration::from_millis(time_since_last_time) > duration_time {
+            true
+        } else {
+            false
+        }
+    }
+
+    fn five_minutes_has_passed(&self, last_time :u64) -> bool{
+        self.has_passed(300,last_time)
+    }
+
 
     //  Used to add a asset entry.
     #[modifiers(only_role(CONTRIBUTOR))]

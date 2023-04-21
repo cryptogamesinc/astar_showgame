@@ -81,6 +81,12 @@ pub trait MultiAsset {
     #[ink(message)]
     fn eat_an_apple(&mut self, token_id: Id) -> Result<()>;
 
+    #[ink(message)]
+    fn has_passed(&self, check_time: u64, last_time: u64) -> bool;
+
+    #[ink(message)]
+    fn five_minutes_has_passed(&self, last_time: u64) -> bool;
+
 
 
     // #[ink(message)]
