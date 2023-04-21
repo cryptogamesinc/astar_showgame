@@ -69,6 +69,17 @@ pub trait MultiAsset {
     #[ink(message)]
     fn get_bad_uri(&self) -> String;
 
+    #[ink(message)]
+    fn get_total_status(&self, token_id: Id) -> u32;
+
+    #[ink(message)]
+    fn get_condition(&self, token_id: Id) -> u32;
+
+    #[ink(message)]
+    fn get_condition_url(&self, token_id: Id) -> String;
+
+
+
     // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;
 
