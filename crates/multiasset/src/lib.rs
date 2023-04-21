@@ -120,9 +120,15 @@ where
             // In case the token_id doesn't exist in the asset_status map, we just return a default status with all fields set to 0.
             Status { hungry: 0, health: 0, happy: 0 }
         });
-    
+
+        let hungry_status: u32;
+        if original_status.hungry > 20 {
+            hungry_status = original_status.hungry - 20;
+        } else {
+            hungry_status = 0;
+        }
         let new_status = Status {
-            hungry: original_status.hungry + 20,
+            hungry: hungry_status,
             health: original_status.health + 20,
             happy: original_status.happy + 20,
         };
@@ -139,9 +145,16 @@ where
             // In case the token_id doesn't exist in the asset_status map, we just return a default status with all fields set to 0.
             Status { hungry: 0, health: 0, happy: 0 }
         });
+
+        let hungry_status: u32;
+        if original_status.hungry > number {
+            hungry_status = original_status.hungry - number;
+        } else {
+            hungry_status = 0;
+        }
     
         let new_status = Status {
-            hungry: original_status.hungry - number,
+            hungry: hungry_status,
             health: original_status.health + number,
             happy: original_status.happy + number,
         };
@@ -235,6 +248,22 @@ where
         } else {
             self.get_good_uri()
         }
+    }
+
+    fn eat_an_apple(&mut self, token_id: Id) -> Result<()> {
+
+        // ランダム性は後から追加
+        let random = 0;
+
+        if random == 0{
+            self.change_some_status(token_id, 30)
+        } else if random == 1{
+            self.set_full_status(token_id)
+        } else if random == 2{
+            self.set_death_status(token_id)
+        } else {
+            self.set_lucky_status(token_id)
+        } 
     }
 
     //  Used to add a asset entry.

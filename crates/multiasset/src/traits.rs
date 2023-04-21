@@ -78,6 +78,9 @@ pub trait MultiAsset {
     #[ink(message)]
     fn get_condition_url(&self, token_id: Id) -> String;
 
+    #[ink(message)]
+    fn eat_an_apple(&mut self, token_id: Id) -> Result<()>;
+
 
 
     // #[ink(message)]
