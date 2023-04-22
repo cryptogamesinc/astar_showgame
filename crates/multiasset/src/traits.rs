@@ -87,8 +87,8 @@ pub trait MultiAsset {
     #[ink(message)]
     fn five_minutes_has_passed(&self, last_time: u64) -> bool;
 
-
-
+    #[ink(message)]
+    fn get_pseudo_random(&mut self, max_value: u8) -> u8;
     // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;
 

@@ -28,7 +28,7 @@ pub mod rmrk_example_equippable {
     use rmrk::{
         config,
         query::*,
-        storage::*,
+        storage::{*, MultiAssetData},
         traits::*,
         types::*,
     };
@@ -209,6 +209,8 @@ pub mod rmrk_example_equippable {
         minting: MintingData,
         #[storage_field]
         equippable: EquippableData,
+
+        salt: u64,
     }
 
     impl PSP34 for Rmrk {}

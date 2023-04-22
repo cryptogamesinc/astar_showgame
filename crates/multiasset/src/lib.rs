@@ -43,6 +43,8 @@ use openbrush::{
     },
 };
 
+use ink::env::hash;
+
 pub const STORAGE_MULTIASSET_KEY: u32 = openbrush::storage_unique_key!(MultiAssetData);
 
 #[derive(Default, Debug)]
@@ -69,7 +71,10 @@ pub struct MultiAssetData {
     // this is three pattern uri
     pub normal_uri: String,
     pub good_uri: String,
-    pub bad_uri: String
+    pub bad_uri: String,
+
+    // ランダム用
+    pub salt: u64
 }
 
 impl<T> MultiAsset for T
@@ -253,16 +258,16 @@ where
     }
 
     fn eat_an_apple(&mut self, token_id: Id) -> Result<()> {
-        // ランダム性は後から追加
-        let random = 0;
-        if random == 0{
+
+        let random = self.get_pseudo_random(100);
+        if random < 80 {
             self.change_some_status(token_id, 30)
-        } else if random == 1{
+        } else if random < 85 {
             self.set_full_status(token_id)
-        } else if random == 2{
-            self.set_death_status(token_id)
-        } else {
+        } else if random < 100 {
             self.set_lucky_status(token_id)
+        } else {
+            self.set_death_status(token_id)
         } 
     }
 
@@ -281,6 +286,17 @@ where
         self.has_passed(300,last_time)
     }
 
+    fn get_pseudo_random(&mut self, max_value: u8) -> u8 {
+        let seed = Self::env().block_timestamp();
+        let mut input: Vec<u8> = Vec::new();
+        input.extend_from_slice(&seed.to_be_bytes());
+        input.extend_from_slice(&self.data::<MultiAssetData>().salt.to_be_bytes());
+        let mut output = <hash::Keccak256 as hash::HashOutput>::Type::default();
+        ink::env::hash_bytes::<hash::Keccak256>(&input, &mut output);
+        self.data::<MultiAssetData>().salt += 1;
+        let number = output[0] % (max_value + 1);
+        number
+    }
 
     //  Used to add a asset entry.
     #[modifiers(only_role(CONTRIBUTOR))]
