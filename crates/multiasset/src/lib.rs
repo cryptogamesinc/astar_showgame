@@ -298,6 +298,15 @@ where
         number
     }
 
+    fn token_uri(&self , token_id: Id) -> String {
+        let uri = self.get_normal_uri();
+
+        // let token_uri = uri + token_id.to_string();
+        // token_uri 今は仮でuriと設定
+        uri
+    }
+
+
     //  Used to add a asset entry.
     #[modifiers(only_role(CONTRIBUTOR))]
     fn add_asset_entry(
