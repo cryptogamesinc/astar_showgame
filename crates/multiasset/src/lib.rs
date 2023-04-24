@@ -10,6 +10,9 @@ use core::{time::Duration};
 
 use internal::Internal;
 
+use ink::prelude::string::ToString;
+
+
 use rmrk_common::{
     errors::{
         Result,
@@ -326,19 +329,40 @@ where
         number
     }
 
-    // fn token_uri(&self , token_id: Id) -> String {
-    //     let uri = self.get_normal_uri();
+    fn token_uri(&self , token_id: Id) -> String {
+        let id_string:ink::prelude::string::String = match token_id {
+            Id::U8(u8) => {
+                let tmp: u8 = u8;
+                tmp.to_string()
+            }
+            Id::U16(u16) => {
+                let tmp: u16 = u16;
+                tmp.to_string()
+            }
+            Id::U32(u32) => {
+                let tmp: u32 = u32;
+                tmp.to_string()
+            }
+            Id::U64(u64) => {
+                let tmp: u64 = u64;
+                tmp.to_string()
+            }
+            Id::U128(u128) => {
+                let tmp: u128 = u128;
+                tmp.to_string()
+            }
+            // _ => "0".to_string()
+            Id::Bytes(value) => ink::prelude::string::String::from_utf8(value.clone()).unwrap(),
+        };
 
-    //     // token_id.to_bytes()
-    //     // let to = uri + ".json";
-    //     // let tmp: Id::U64 = token_id;
-    //     // tmp.to_string();
+        let base_uri:String = self.get_normal_uri();
+        let tmp_uri: ink::prelude::string::String = ink::prelude::string::String::from_utf8(base_uri).unwrap();
+        let uri:ink::prelude::string::String = tmp_uri + &id_string;
 
-    //     // // let token_uri = uri + token_id.to_string();
-    //     // Id::U64(token_id).to_string();
-    //     // // token_uri 今は仮でuriと設定
-    //     // uri
-    // }
+        // let token_uri = uri + token_id.to_string();
+        // token_uri 今は仮でuriと設定
+        uri.into_bytes()
+    }
 
 
     //  Used to add a asset entry.
