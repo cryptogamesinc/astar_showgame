@@ -6,7 +6,7 @@
 pub mod internal;
 pub mod traits;
 
-use core::time::Duration;
+use core::{time::Duration};
 
 use internal::Internal;
 
@@ -74,7 +74,12 @@ pub struct MultiAssetData {
     pub bad_uri: String,
 
     // ランダム用
-    pub salt: u64
+    pub salt: u64,
+
+    pub last_eaten: Mapping<Id, u64>,
+
+
+    
 }
 
 impl<T> MultiAsset for T
@@ -259,16 +264,39 @@ where
 
     fn eat_an_apple(&mut self, token_id: Id) -> Result<()> {
 
-        let random = self.get_pseudo_random(100);
-        if random < 80 {
-            self.change_some_status(token_id, 30)
-        } else if random < 85 {
-            self.set_full_status(token_id)
-        } else if random < 100 {
-            self.set_lucky_status(token_id)
+        // 前回のリンゴを食べた時間を取得。エラーの場合は、０を返す（todo 仮で設定）
+        let last_eaten = self.data::<MultiAssetData>()
+            .last_eaten
+            .get(&token_id)
+            .unwrap_or(Default::default());
+        // 決められた時間が経過したかの関数
+        let has_passed = self.five_minutes_has_passed(last_eaten);
+
+        //  決められた時間が経過していない場合
+        if has_passed ==false {
+            Err(RmrkError::CollectionIsFull.into())
+
         } else {
-            self.set_death_status(token_id)
-        } 
+            //　現在時刻取得 
+            let current_time = Self::env().block_timestamp();
+            //  last_eatenに現在時刻を入れる
+            self.data::<MultiAssetData>()
+            .last_eaten
+            .insert(&token_id, &current_time);
+
+            // 疑似乱数による分岐
+            let random = self.get_pseudo_random(100);
+            if random < 80 {
+                self.change_some_status(token_id, 30)
+            } else if random < 85 {
+                self.set_full_status(token_id)
+            } else if random < 100 {
+                self.set_lucky_status(token_id)
+            } else {
+                self.set_death_status(token_id)
+            } 
+        }
+        
     }
 
     fn has_passed(&self, check_time :u64, last_time :u64) -> bool{
@@ -298,13 +326,19 @@ where
         number
     }
 
-    fn token_uri(&self , token_id: Id) -> String {
-        let uri = self.get_normal_uri();
+    // fn token_uri(&self , token_id: Id) -> String {
+    //     let uri = self.get_normal_uri();
 
-        // let token_uri = uri + token_id.to_string();
-        // token_uri 今は仮でuriと設定
-        uri
-    }
+    //     // token_id.to_bytes()
+    //     // let to = uri + ".json";
+    //     // let tmp: Id::U64 = token_id;
+    //     // tmp.to_string();
+
+    //     // // let token_uri = uri + token_id.to_string();
+    //     // Id::U64(token_id).to_string();
+    //     // // token_uri 今は仮でuriと設定
+    //     // uri
+    // }
 
 
     //  Used to add a asset entry.
