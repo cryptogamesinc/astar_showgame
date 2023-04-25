@@ -82,8 +82,14 @@ pub struct MultiAssetData {
     // 前回食べた時間
     pub last_eaten: Mapping<Id, u64>,
 
+    // 前回デイリーボーナスを取得した時間
+    pub last_bonus: Mapping<AccountId, u64>,
+
     // アカウントが保持しているリンゴの数
     pub apple_number: Mapping<AccountId, u16>,
+
+    // アカウントが保持しているゲーム内通貨
+    pub your_money: Mapping<AccountId, u64>,
 
     
 }
@@ -271,10 +277,7 @@ where
     fn eat_an_apple(&mut self, token_id: Id) -> Result<()> {
 
         // 前回のリンゴを食べた時間を取得。エラーの場合は、０を返す（todo 仮で設定）
-        let last_eaten = self.data::<MultiAssetData>()
-            .last_eaten
-            .get(&token_id)
-            .unwrap_or(Default::default());
+        let last_eaten = self.get_last_eaten(token_id.clone());
         // 決められた時間が経過したかの関数
         let has_passed = self.five_minutes_has_passed(last_eaten);
 
@@ -318,6 +321,10 @@ where
 
     fn five_minutes_has_passed(&self, last_time :u64) -> bool{
         self.has_passed(300,last_time)
+    }
+
+    fn one_day_has_passed(&self, last_time :u64) -> bool{
+        self.has_passed(60 * 60 * 24 ,last_time)
     }
 
     fn get_pseudo_random(&mut self, max_value: u8) -> u8 {
@@ -372,6 +379,83 @@ where
             .apple_number
             .get(&account_id)
             .unwrap_or_default()
+    }
+
+    fn get_your_money(&self, account_id: AccountId) -> u64 {
+        self.data::<MultiAssetData>()
+            .your_money
+            .get(&account_id)
+            .unwrap_or_default()
+    }
+
+
+    fn buy_an_apple(&mut self, account_id: AccountId) -> Result<()>{
+
+        // 仮にリンゴの値段を20とする。エラーの場合は?があるため返る
+        self.minus_your_money(account_id, 20)?;
+
+        // １個加える
+        let after_apple = self.get_your_apple(account_id) + 1;
+
+        self.data::<MultiAssetData>()
+            .apple_number
+            .insert(account_id, &after_apple);
+
+        Ok(())
+
+    }
+
+    fn minus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()> {
+        
+        // 現在の所有のゲーム内通貨を取得する
+        let money = self.get_your_money(account_id);
+
+        if money < change_money {
+            Err(RmrkError::NotTokenOwner.into())
+        } else {
+            let after_money = money - change_money;
+            self.data::<MultiAssetData>()
+            .your_money
+            .insert(account_id, &after_money);
+        Ok(())
+        }
+    }
+
+    fn daily_bonus(&mut self, account_id: AccountId) -> Result<()> {
+
+       // 前回のリンゴを食べた時間を取得。エラーの場合は、０を返す（todo 仮で設定）
+       let last_bonus = self.get_last_bonus(account_id);
+       // 決められた時間が経過したかの関数
+       let has_passed = self.one_day_has_passed(last_bonus);
+
+       //  決められた時間が経過していない場合
+       if has_passed ==false {
+           Err(RmrkError::CollectionIsFull.into())
+
+       } else {
+           //　現在時刻取得 
+           let current_time = Self::env().block_timestamp();
+           //  last_eatenに現在時刻を入れる
+           self.data::<MultiAssetData>()
+           .last_bonus
+           .insert(&account_id, &current_time);
+
+          Ok(())
+       }
+    }
+
+    fn get_last_eaten(&self, token_id: Id) -> u64 {
+        self.data::<MultiAssetData>()
+            .last_eaten
+            .get(&token_id)
+            .unwrap_or(Default::default())
+    }
+
+    fn get_last_bonus(&self, account_id: AccountId) -> u64 {
+        self.data::<MultiAssetData>()
+            .last_bonus
+            .get(&account_id)
+            .unwrap_or(Default::default())
     }
 
     //  Used to add a asset entry.
