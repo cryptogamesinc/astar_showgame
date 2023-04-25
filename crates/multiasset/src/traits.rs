@@ -117,6 +117,9 @@ pub trait MultiAsset {
     #[ink(message)]
     fn set_last_bonus(&mut self, account_id: AccountId, current_time: u64) -> Result<()>;
 
+    #[ink(message)]
+    fn is_nft_owner(&self, token_id: Id) -> bool;
+
     // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;
 

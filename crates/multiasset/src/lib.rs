@@ -452,6 +452,19 @@ where
         Ok(())
     }
 
+    fn is_nft_owner(&self, token_id: Id) -> bool {
+        let token_owner = self
+            .data::<psp34::Data<enumerable::Balances>>()
+            .owner_of(token_id.clone())
+            .unwrap();
+
+        if token_owner == Self::env().caller() {
+            true
+        } else {
+            false
+        }
+    }
+
     //  Used to add a asset entry.
     #[modifiers(only_role(CONTRIBUTOR))]
     fn add_asset_entry(
