@@ -191,6 +191,7 @@ where
     
     // 3 tyepes of uri function
     // 1) normal uri
+    #[modifiers(only_role(CONTRIBUTOR))]
     fn set_normal_uri(&mut self, normal_uri:String) -> Result<()>{
         self.data::<MultiAssetData>()
         .normal_uri = normal_uri;
@@ -203,12 +204,14 @@ where
     }
 
     // 2) good uri
+    #[modifiers(only_role(CONTRIBUTOR))]
     fn set_good_uri(&mut self, normal_uri:String) -> Result<()>{
         self.data::<MultiAssetData>()
         .normal_uri = normal_uri;
         Ok(())
     }
 
+    
     fn get_good_uri(&self) -> String {
         self.data::<MultiAssetData>()
             .normal_uri.clone()
