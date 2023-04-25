@@ -92,6 +92,10 @@ pub trait MultiAsset {
 
     #[ink(message)]
     fn token_uri(&self, token_id: Id) -> String;
+
+    #[ink(message)]
+    fn get_your_apple(&self, account_id: AccountId) -> u16;
+
     // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;
 

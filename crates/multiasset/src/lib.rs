@@ -79,8 +79,11 @@ pub struct MultiAssetData {
     // ランダム用
     pub salt: u64,
 
+    // 前回食べた時間
     pub last_eaten: Mapping<Id, u64>,
 
+    // アカウントが保持しているリンゴの数
+    pub apple_number: Mapping<AccountId, u16>,
 
     
 }
@@ -364,6 +367,12 @@ where
         uri.into_bytes()
     }
 
+    fn get_your_apple(&self, account_id: AccountId) -> u16 {
+        self.data::<MultiAssetData>()
+            .apple_number
+            .get(&account_id)
+            .unwrap_or_default()
+    }
 
     //  Used to add a asset entry.
     #[modifiers(only_role(CONTRIBUTOR))]
