@@ -82,18 +82,6 @@ pub trait MultiAsset {
     fn eat_an_apple(&mut self, token_id: Id) -> Result<()>;
 
     #[ink(message)]
-    fn has_passed(&self, check_time: u64, last_time: u64) -> bool;
-
-    #[ink(message)]
-    fn five_minutes_has_passed(&self, last_time: u64) -> bool;
-
-    #[ink(message)]
-    fn one_day_has_passed(&self, last_time: u64) -> bool;
-
-    #[ink(message)]
-    fn get_pseudo_random(&mut self, max_value: u8) -> u8;
-
-    #[ink(message)]
     fn token_uri(&self, token_id: Id) -> String;
 
     #[ink(message)]
@@ -103,10 +91,16 @@ pub trait MultiAsset {
     fn get_your_money(&self, account_id: AccountId) -> u64;
 
     #[ink(message)]
+    fn set_your_money(&mut self, account_id: AccountId, after_money: u64) -> Result<()>;
+
+    #[ink(message)]
     fn buy_an_apple(&mut self, account_id: AccountId) -> Result<()>;
 
     #[ink(message)]
     fn minus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()>;
+
+    #[ink(message)]
+    fn plus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()>;
 
     #[ink(message)]
     fn daily_bonus(&mut self, account_id: AccountId) -> Result<()>;
@@ -115,7 +109,13 @@ pub trait MultiAsset {
     fn get_last_eaten(&self, token_id: Id) -> u64;
 
     #[ink(message)]
+    fn set_last_eaten(&mut self, token_id: Id, current_time: u64) -> Result<()>;
+
+    #[ink(message)]
     fn get_last_bonus(&self, account_id: AccountId) -> u64;
+
+    #[ink(message)]
+    fn set_last_bonus(&mut self, account_id: AccountId, current_time: u64) -> Result<()>;
 
     // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;

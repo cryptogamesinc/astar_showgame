@@ -18,6 +18,9 @@ use openbrush::{
     contracts::psp34::extensions::enumerable::*,
     traits::Storage,
 };
+use ink::env::hash;
+
+use core::{time::Duration};
 
 /// Trait definitions for MultiAsset helper functions
 pub trait Internal {
@@ -52,6 +55,16 @@ pub trait Internal {
 
     /// Remove the asset to the list of accepted assets
     fn remove_from_accepted_assets(&mut self, token_id: &Id, asset_id: &AssetId) -> Result<()>;
+
+    fn get_pseudo_random(&mut self, max_value: u8) -> u8;
+
+    fn has_passed(&self, check_time: u64, last_time: u64) -> bool;
+
+    fn five_minutes_has_passed(&self, last_time: u64) -> bool;
+
+    fn one_day_has_passed(&self, last_time: u64) -> bool;
+
+    
 }
 
 /// Implement internal helper trait for MultiAsset
@@ -206,5 +219,36 @@ where
             .insert(token_id, &accepted_list);
 
         Ok(())
+    }
+
+    default fn get_pseudo_random(&mut self, max_value: u8) -> u8 {
+        let seed = Self::env().block_timestamp();
+        let mut input: Vec<u8> = Vec::new();
+        input.extend_from_slice(&seed.to_be_bytes());
+        input.extend_from_slice(&self.data::<MultiAssetData>().salt.to_be_bytes());
+        let mut output = <hash::Keccak256 as hash::HashOutput>::Type::default();
+        ink::env::hash_bytes::<hash::Keccak256>(&input, &mut output);
+        self.data::<MultiAssetData>().salt += 1;
+        let number = output[0] % (max_value + 1);
+        number
+    }
+
+    default fn has_passed(&self, check_time :u64, last_time :u64) -> bool{
+        let current_time = Self::env().block_timestamp();
+        let time_since_last_time = current_time - last_time;
+        let duration_time = Duration::from_secs(check_time);
+        if Duration::from_millis(time_since_last_time) > duration_time {
+            true
+        } else {
+            false
+        }
+    }
+
+    default fn five_minutes_has_passed(&self, last_time :u64) -> bool{
+        self.has_passed(300,last_time)
+    }
+
+    default fn one_day_has_passed(&self, last_time :u64) -> bool{
+        self.has_passed(60 * 60 * 24 ,last_time)
     }
 }

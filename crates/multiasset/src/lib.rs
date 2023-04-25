@@ -6,8 +6,6 @@
 pub mod internal;
 pub mod traits;
 
-use core::{time::Duration};
-
 use internal::Internal;
 
 use ink::prelude::string::ToString;
@@ -45,8 +43,6 @@ use openbrush::{
         String,
     },
 };
-
-use ink::env::hash;
 
 pub const STORAGE_MULTIASSET_KEY: u32 = openbrush::storage_unique_key!(MultiAssetData);
 
@@ -219,6 +215,7 @@ where
     }
 
     // 3) bad uri
+    #[modifiers(only_role(CONTRIBUTOR))]
     fn set_bad_uri(&mut self, normal_uri:String) -> Result<()>{
         self.data::<MultiAssetData>()
         .normal_uri = normal_uri;
@@ -289,9 +286,7 @@ where
             //　現在時刻取得 
             let current_time = Self::env().block_timestamp();
             //  last_eatenに現在時刻を入れる
-            self.data::<MultiAssetData>()
-            .last_eaten
-            .insert(&token_id, &current_time);
+            self.set_last_eaten(token_id.clone(), current_time)?;
 
             // 疑似乱数による分岐
             let random = self.get_pseudo_random(100);
@@ -308,36 +303,6 @@ where
         
     }
 
-    fn has_passed(&self, check_time :u64, last_time :u64) -> bool{
-        let current_time = Self::env().block_timestamp();
-        let time_since_last_time = current_time - last_time;
-        let duration_time = Duration::from_secs(check_time);
-        if Duration::from_millis(time_since_last_time) > duration_time {
-            true
-        } else {
-            false
-        }
-    }
-
-    fn five_minutes_has_passed(&self, last_time :u64) -> bool{
-        self.has_passed(300,last_time)
-    }
-
-    fn one_day_has_passed(&self, last_time :u64) -> bool{
-        self.has_passed(60 * 60 * 24 ,last_time)
-    }
-
-    fn get_pseudo_random(&mut self, max_value: u8) -> u8 {
-        let seed = Self::env().block_timestamp();
-        let mut input: Vec<u8> = Vec::new();
-        input.extend_from_slice(&seed.to_be_bytes());
-        input.extend_from_slice(&self.data::<MultiAssetData>().salt.to_be_bytes());
-        let mut output = <hash::Keccak256 as hash::HashOutput>::Type::default();
-        ink::env::hash_bytes::<hash::Keccak256>(&input, &mut output);
-        self.data::<MultiAssetData>().salt += 1;
-        let number = output[0] % (max_value + 1);
-        number
-    }
 
     fn token_uri(&self , token_id: Id) -> String {
         let id_string:ink::prelude::string::String = match token_id {
@@ -388,6 +353,13 @@ where
             .unwrap_or_default()
     }
 
+    fn set_your_money(&mut self, account_id: AccountId, after_money: u64) -> Result<()> {
+        self.data::<MultiAssetData>()
+            .your_money
+            .insert(account_id, &after_money);
+        Ok(())
+    }
+
 
     fn buy_an_apple(&mut self, account_id: AccountId) -> Result<()>{
 
@@ -414,16 +386,24 @@ where
             Err(RmrkError::NotTokenOwner.into())
         } else {
             let after_money = money - change_money;
-            self.data::<MultiAssetData>()
-            .your_money
-            .insert(account_id, &after_money);
-        Ok(())
+            self.set_your_money(account_id, after_money)?;
+            Ok(())
         }
+    }
+
+    fn plus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()> {
+        
+        // 現在の所有のゲーム内通貨を取得する
+        let money = self.get_your_money(account_id);
+
+        let after_money = money + change_money;
+        self.set_your_money(account_id, after_money)?;
+        Ok(())
     }
 
     fn daily_bonus(&mut self, account_id: AccountId) -> Result<()> {
 
-       // 前回のリンゴを食べた時間を取得。エラーの場合は、０を返す（todo 仮で設定）
+       // 前回のボーナスを取得した時間を取得。エラーの場合は、０を返す（todo 仮で設定）
        let last_bonus = self.get_last_bonus(account_id);
        // 決められた時間が経過したかの関数
        let has_passed = self.one_day_has_passed(last_bonus);
@@ -436,10 +416,7 @@ where
            //　現在時刻取得 
            let current_time = Self::env().block_timestamp();
            //  last_eatenに現在時刻を入れる
-           self.data::<MultiAssetData>()
-           .last_bonus
-           .insert(&account_id, &current_time);
-
+           self.set_last_bonus(account_id, current_time)?;
           Ok(())
        }
     }
@@ -451,11 +428,25 @@ where
             .unwrap_or(Default::default())
     }
 
+    fn set_last_eaten(&mut self, token_id: Id, current_time: u64) -> Result<()> {
+        self.data::<MultiAssetData>()
+            .last_eaten
+            .insert(token_id, &current_time);
+        Ok(())
+    }
+
     fn get_last_bonus(&self, account_id: AccountId) -> u64 {
         self.data::<MultiAssetData>()
             .last_bonus
             .get(&account_id)
             .unwrap_or(Default::default())
+    }
+
+    fn set_last_bonus(&mut self, account_id: AccountId, current_time: u64) -> Result<()> {
+        self.data::<MultiAssetData>()
+            .last_bonus
+            .insert(account_id, &current_time);
+        Ok(())
     }
 
     //  Used to add a asset entry.
