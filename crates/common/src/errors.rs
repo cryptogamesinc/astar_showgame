@@ -101,6 +101,9 @@ pub enum RmrkError {
     UnknownPart,
     UnknownPartId,
     WithdrawalFailed,
+    // ここから追加
+    InvalidAccountId,
+
 }
 
 impl ToString for RmrkError {
@@ -136,6 +139,7 @@ impl ToString for RmrkError {
             RmrkError::UnknownPart => String::from("UnknownPart"),
             RmrkError::UnknownPartId => String::from("UnknownPartId"),
             RmrkError::WithdrawalFailed => String::from("WithdrawalFailed"),
+            RmrkError::InvalidAccountId => String::from("InvalidAccountId"),
         }
     }
 }

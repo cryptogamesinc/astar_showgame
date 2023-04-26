@@ -404,24 +404,31 @@ where
         Ok(())
     }
 
+    // 
     fn daily_bonus(&mut self, account_id: AccountId) -> Result<()> {
 
-       // 前回のボーナスを取得した時間を取得。エラーの場合は、０を返す（todo 仮で設定）
-       let last_bonus = self.get_last_bonus(account_id);
-       // 決められた時間が経過したかの関数
-       let has_passed = self.one_day_has_passed(last_bonus);
+        let is_account_id = self.is_account_id(account_id);
 
-       //  決められた時間が経過していない場合
-       if has_passed ==false {
-           Err(RmrkError::CollectionIsFull.into())
+        if is_account_id == true {
+            Err(RmrkError::InvalidAccountId.into())
+        } else {
+            // 前回のボーナスを取得した時間を取得。エラーの場合は、０を返す（todo 仮で設定）
+            let last_bonus = self.get_last_bonus(account_id);
+            // 決められた時間が経過したかの関数
+            let has_passed = self.one_day_has_passed(last_bonus);
 
-       } else {
-           //　現在時刻取得 
-           let current_time = Self::env().block_timestamp();
-           //  last_eatenに現在時刻を入れる
-           self.set_last_bonus(account_id, current_time)?;
-          Ok(())
-       }
+            //  決められた時間が経過していない場合
+            if has_passed ==false {
+                Err(RmrkError::CollectionIsFull.into())
+            } else {
+            //　現在時刻取得 
+            let current_time = Self::env().block_timestamp();
+            //  last_eatenに現在時刻を入れる
+            self.set_last_bonus(account_id, current_time)?;
+            Ok(())
+            }
+        
+        }
     }
 
     fn get_last_eaten(&self, token_id: Id) -> u64 {
