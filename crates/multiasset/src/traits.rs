@@ -120,6 +120,9 @@ pub trait MultiAsset {
     #[ink(message)]
     fn is_nft_owner(&self, token_id: Id) -> bool;
 
+    #[ink(message)]
+    fn is_account_id(&self, account_id: AccountId) -> bool;
+
     // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;
 

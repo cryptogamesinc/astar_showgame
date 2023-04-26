@@ -465,6 +465,15 @@ where
         }
     }
 
+    fn is_account_id(&self, account_id: AccountId) -> bool {
+        let caller = Self::env().caller();
+        if caller == account_id {
+            true
+        } else {
+            false
+        }
+    }
+
     //  Used to add a asset entry.
     #[modifiers(only_role(CONTRIBUTOR))]
     fn add_asset_entry(
