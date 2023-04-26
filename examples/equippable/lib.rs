@@ -27,7 +27,6 @@ pub mod rmrk_example_equippable {
 
     use rmrk::{
         config,
-        query::*,
         storage::{*, MultiAssetData},
         traits::*,
         types::*,
@@ -202,8 +201,6 @@ pub mod rmrk_example_equippable {
         #[storage_field]
         metadata: metadata::Data,
         #[storage_field]
-        nesting: NestingData,
-        #[storage_field]
         multiasset: MultiAssetData,
         #[storage_field]
         minting: MintingData,
@@ -223,13 +220,9 @@ pub mod rmrk_example_equippable {
 
     impl Minting for Rmrk {}
 
-    impl Nesting for Rmrk {}
-
     impl MultiAsset for Rmrk {}
 
     impl Equippable for Rmrk {}
-
-    impl Query for Rmrk {}
 
     impl Rmrk {
         /// Instantiate new RMRK contract
