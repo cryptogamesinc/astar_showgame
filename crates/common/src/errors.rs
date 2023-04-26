@@ -103,6 +103,7 @@ pub enum RmrkError {
     WithdrawalFailed,
     // ここから追加
     InvalidAccountId,
+    TimeHasNotPassed,
 
 }
 
@@ -139,7 +140,9 @@ impl ToString for RmrkError {
             RmrkError::UnknownPart => String::from("UnknownPart"),
             RmrkError::UnknownPartId => String::from("UnknownPartId"),
             RmrkError::WithdrawalFailed => String::from("WithdrawalFailed"),
+            // ここから追加
             RmrkError::InvalidAccountId => String::from("InvalidAccountId"),
+            RmrkError::TimeHasNotPassed => String::from("TimeHasNotPassed"),
         }
     }
 }

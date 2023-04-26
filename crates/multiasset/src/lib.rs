@@ -283,8 +283,7 @@ where
 
         //  決められた時間が経過していない場合
         if has_passed ==false {
-            Err(RmrkError::CollectionIsFull.into())
-
+            Err(RmrkError::TimeHasNotPassed.into())
         } else {
             //　現在時刻取得 
             let current_time = Self::env().block_timestamp();
@@ -337,8 +336,6 @@ where
         let tmp_uri: ink::prelude::string::String = ink::prelude::string::String::from_utf8(base_uri).unwrap();
         let uri:ink::prelude::string::String = tmp_uri + &id_string;
 
-        // let token_uri = uri + token_id.to_string();
-        // token_uri 今は仮でuriと設定
         uri.into_bytes()
     }
 
@@ -419,7 +416,7 @@ where
 
             //  決められた時間が経過していない場合
             if has_passed ==false {
-                Err(RmrkError::CollectionIsFull.into())
+                Err(RmrkError::TimeHasNotPassed.into())
             } else {
             //　現在時刻取得 
             let current_time = Self::env().block_timestamp();
