@@ -9,7 +9,10 @@ pub mod traits;
 use internal::Internal;
 
 use rmrk_common::{
-    errors::Result,
+    errors::{
+        Result,
+        RmrkError,
+    },
     roles::CONTRIBUTOR,
     utils::Utils,
 };
@@ -100,6 +103,25 @@ where
     default fn token_uri(&self, token_id: u64) -> Result<PreludeString> {
         self.ensure_exists_and_get_owner(&Id::U64(token_id))?;
         self._token_uri(token_id)
+    }
+
+    /// Mint one token to the specified account.
+
+    default fn claim_a_nft(&mut self) -> Result<Id> {
+
+        let to = Self::env().caller();
+
+        let nft_balance = self
+            .data::<psp34::Data<enumerable::Balances>>()
+            .balance_of(to.clone());
+
+        if nft_balance > 0 {
+            Err(RmrkError::AlreadyHadOneNft.into())
+        } else {
+            self._check_amount(1)?;
+            self._mint(to)
+        }
+        
     }
 }
 

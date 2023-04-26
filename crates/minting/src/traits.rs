@@ -40,6 +40,11 @@ pub trait Minting {
     /// Get URI for the token Id.
     #[ink(message)]
     fn token_uri(&self, token_id: u64) -> Result<PreludeString>;
+
+    // ここから追加
+    #[ink(message)]
+    fn claim_a_nft(&mut self) -> Result<Id>;
+
 }
 
 /// Trait definitions for lazy Minting functions
