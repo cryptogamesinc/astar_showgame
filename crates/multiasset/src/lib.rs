@@ -205,29 +205,29 @@ where
 
     // 2) good uri
     #[modifiers(only_role(CONTRIBUTOR))]
-    fn set_good_uri(&mut self, normal_uri:String) -> Result<()>{
+    fn set_good_uri(&mut self, good_uri:String) -> Result<()>{
         self.data::<MultiAssetData>()
-        .normal_uri = normal_uri;
+        .good_uri = good_uri;
         Ok(())
     }
 
     
     fn get_good_uri(&self) -> String {
         self.data::<MultiAssetData>()
-            .normal_uri.clone()
+            .good_uri.clone()
     }
 
     // 3) bad uri
     #[modifiers(only_role(CONTRIBUTOR))]
-    fn set_bad_uri(&mut self, normal_uri:String) -> Result<()>{
+    fn set_bad_uri(&mut self, bad_uri:String) -> Result<()>{
         self.data::<MultiAssetData>()
-        .normal_uri = normal_uri;
+        .bad_uri = bad_uri;
         Ok(())
     }
 
     fn get_bad_uri(&self) -> String {
         self.data::<MultiAssetData>()
-            .normal_uri.clone()
+            .bad_uri.clone()
     }
 
     fn get_total_status(&self, token_id: Id) -> u32 {
@@ -309,7 +309,7 @@ where
 
 
     fn token_uri(&self , token_id: Id) -> String {
-        let id_string:ink::prelude::string::String = match token_id {
+        let id_string:ink::prelude::string::String = match token_id.clone() {
             Id::U8(u8) => {
                 let tmp: u8 = u8;
                 tmp.to_string()
@@ -334,7 +334,7 @@ where
             Id::Bytes(value) => ink::prelude::string::String::from_utf8(value.clone()).unwrap(),
         };
 
-        let base_uri:String = self.get_normal_uri();
+        let base_uri:String = self.get_condition_url(token_id.clone());
         let tmp_uri: ink::prelude::string::String = ink::prelude::string::String::from_utf8(base_uri).unwrap();
         let uri:ink::prelude::string::String = tmp_uri + &id_string;
 
