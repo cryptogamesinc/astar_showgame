@@ -274,7 +274,7 @@ where
         }
     }
 
-    fn eat_an_apple(&mut self, token_id: Id) -> Result<()> {
+    fn eat_an_apple(&mut self, token_id: Id, account_id: AccountId) -> Result<()> {
 
         // 前回のリンゴを食べた時間を取得。エラーの場合は、０を返す（todo 仮で設定）
         let last_eaten = self.get_last_eaten(token_id.clone());
@@ -289,6 +289,8 @@ where
             let current_time = Self::env().block_timestamp();
             //  last_eatenに現在時刻を入れる
             self.set_last_eaten(token_id.clone(), current_time)?;
+            //  リンゴの数を減らす
+            self.minus_your_apple(account_id)?;
 
             // 疑似乱数による分岐
             let random = self.get_pseudo_random(100);
@@ -375,6 +377,23 @@ where
 
         Ok(())
 
+    }
+
+    fn minus_your_apple(&mut self, account_id: AccountId) -> Result<()> {
+        
+        // リンゴの数を取得する
+        let apple_number = self.get_your_apple(account_id);
+
+        if apple_number < 1 {
+            Err(RmrkError::NotEnoughApple.into())
+        } else {
+            let after_apple = apple_number - 1;
+
+            self.data::<MultiAssetData>()
+            .apple_number
+            .insert(account_id, &after_apple);
+            Ok(())
+        }
     }
 
     fn minus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()> {

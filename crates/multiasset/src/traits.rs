@@ -79,7 +79,7 @@ pub trait MultiAsset {
     fn get_condition_url(&self, token_id: Id) -> String;
 
     #[ink(message)]
-    fn eat_an_apple(&mut self, token_id: Id) -> Result<()>;
+    fn eat_an_apple(&mut self, token_id: Id, account_id: AccountId) -> Result<()>;
 
     #[ink(message)]
     fn token_uri(&self, token_id: Id) -> String;
@@ -95,6 +95,9 @@ pub trait MultiAsset {
 
     #[ink(message)]
     fn buy_an_apple(&mut self, account_id: AccountId) -> Result<()>;
+
+    #[ink(message)]
+    fn minus_your_apple(&mut self, account_id: AccountId) -> Result<()>;
 
     #[ink(message)]
     fn minus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()>;
