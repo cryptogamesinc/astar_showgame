@@ -135,6 +135,48 @@ where
             .get(token_id)
     }
 
+    fn get_current_status(&self, token_id: Id) -> Option<Status> {
+
+        //　現在時刻取得 
+        let current_time = Self::env().block_timestamp();
+
+         // 前回のステータスをチェックした時間を取得。エラーの場合は、０を返す（todo 仮で設定）
+         let last_checked_time = self.data::<MultiAssetData>()
+            .last_eaten
+            .get(&token_id)
+            .unwrap_or(Default::default());
+        if last_checked_time == 0 {
+            return Some(Status {
+                hungry: 0,
+                health: 0,
+                happy: 0,
+            });
+        } else {
+        
+            let past_time = current_time - last_checked_time;
+
+            // ここでは60秒（60 ※ m秒）
+            let past_day = past_time / (60 * 1000) ;
+            // 仮で、単位当たり、5減る想定
+            let change_status = past_day * 5;
+
+            let original_status = self.get_status(token_id.clone()).unwrap_or_else(|| {
+                // In case the token_id doesn't exist in the asset_status map, we just return a default status with all fields set to 0.
+                Status { hungry: 0, health: 0, happy: 0 }
+            });
+
+            let new_hungy_status = original_status.hungry + (change_status as u32);
+            let new_health_status = original_status.health.saturating_sub(change_status as u32);
+            let new_happy_status = original_status.happy.saturating_sub(change_status as u32);
+
+            return Some(Status {
+                hungry: new_hungy_status,
+                health: new_health_status,
+                happy: new_happy_status,
+            });
+        }
+    }
+
     fn add_twenty(&mut self, token_id: Id) -> Result<()> {
         let original_status = self.get_status(token_id.clone()).unwrap_or_else(|| {
             // In case the token_id doesn't exist in the asset_status map, we just return a default status with all fields set to 0.

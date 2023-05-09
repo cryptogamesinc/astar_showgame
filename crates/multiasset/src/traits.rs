@@ -42,6 +42,9 @@ pub trait MultiAsset {
     fn get_status(&self, token_id: Id) -> Option<Status>;
 
     #[ink(message)]
+    fn get_current_status(&self, token_id: Id) -> Option<Status>;
+
+    #[ink(message)]
     fn add_twenty(&mut self, token_id: Id) -> Result<()>;
 
     #[ink(message)]
