@@ -470,19 +470,18 @@ where
         if is_account_id == false {
             Err(RmrkError::InvalidAccountId.into())
         } else {
-            // 前回のボーナスを取得した時間を取得。エラーの場合は、０を返す（todo 仮で設定）
+            // Get the time when the last bonus was obtained. In case of error, return 0 
             let last_bonus = self.get_last_bonus(account_id);
-            // 決められた時間が経過したかの関数
-            // let has_passed = self.one_day_has_passed(last_bonus);
+            // Function of whether a predetermined amount of time has elapsed.
             let has_passed = self.five_minutes_has_passed(last_bonus);
 
-            //  決められた時間が経過していない場合
+            //  If the allotted time has not elapsed
             if has_passed ==false {
                 Err(RmrkError::TimeHasNotPassed.into())
             } else {
-            //　現在時刻取得 
+            //　Get the current time
             let current_time = Self::env().block_timestamp();
-            //  last_eatenに現在時刻を入れる
+            //  Put current time in last_bonus
             self.set_last_bonus(account_id, current_time)?;
 
             let after_money = self.get_your_money(account_id) + 100;
