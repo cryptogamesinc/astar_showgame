@@ -137,10 +137,10 @@ where
 
     fn get_current_status(&self, token_id: Id) -> Option<Status> {
 
-        //　現在時刻取得 
+        //　get the current time
         let current_time = Self::env().block_timestamp();
 
-         // 前回のステータスをチェックした時間を取得。エラーの場合は、０を返す（todo 仮で設定）
+         // get the last eaten time
          let last_checked_time = self.data::<MultiAssetData>()
             .last_eaten
             .get(&token_id)
@@ -155,9 +155,9 @@ where
         
             let past_time = current_time - last_checked_time;
 
-            // ここでは60秒（60 ※ m秒）
+            // 60 seconds（60 ※ 1000 miliseconds）
             let past_day = past_time / (60 * 1000) ;
-            // 仮で、単位当たり、5減る想定
+            // Assuming a hypothetical decrease of 5 per unit
             let change_status = past_day * 5;
 
             let original_status = self.get_status(token_id.clone()).unwrap_or_else(|| {
@@ -336,11 +336,11 @@ where
 
             // 疑似乱数による分岐
             let random = self.get_pseudo_random(100);
-            if random < 80 {
+            if random < 25 {
                 self.change_some_status(token_id, 30)
-            } else if random < 85 {
+            } else if random < 50 {
                 self.set_full_status(token_id)
-            } else if random < 100 {
+            } else if random < 75 {
                 self.set_lucky_status(token_id)
             } else {
                 self.set_death_status(token_id)
