@@ -245,7 +245,7 @@ where
     }
 
     default fn five_minutes_has_passed(&self, last_time :u64) -> bool{
-        self.has_passed(5,last_time)
+        self.has_passed(60,last_time)
     }
 
     default fn one_day_has_passed(&self, last_time :u64) -> bool{
