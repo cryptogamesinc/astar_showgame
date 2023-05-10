@@ -444,7 +444,7 @@ where
         let money = self.get_your_money(account_id);
 
         if money < change_money {
-            Err(RmrkError::NotTokenOwner.into())
+            Err(RmrkError::NotEnoughMoney.into())
         } else {
             let after_money = money - change_money;
             self.set_your_money(account_id, after_money)?;

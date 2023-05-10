@@ -106,6 +106,7 @@ pub enum RmrkError {
     TimeHasNotPassed,
     AlreadyHadOneNft,
     NotEnoughApple,
+    NotEnoughMoney
 }
 
 impl ToString for RmrkError {
@@ -146,6 +147,7 @@ impl ToString for RmrkError {
             RmrkError::TimeHasNotPassed => String::from("TimeHasNotPassed"),
             RmrkError::AlreadyHadOneNft => String::from("TimeHasNotPassed"),
             RmrkError::NotEnoughApple => String::from("NotEnoughApple"),
+            RmrkError::NotEnoughMoney => String::from("NotEnoughMoney"),
         }
     }
 }
