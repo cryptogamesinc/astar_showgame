@@ -114,6 +114,12 @@ pub trait MultiAsset {
     fn plus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()>;
 
     #[ink(message)]
+    fn stake_your_money(&mut self, account_id: AccountId) -> Result<()>;
+
+    #[ink(message)]
+    fn get_your_staked_money(&self, account_id: AccountId) -> u64;
+
+    #[ink(message)]
     fn daily_bonus(&mut self, account_id: AccountId) -> Result<()>;
 
     #[ink(message)]

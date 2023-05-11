@@ -81,11 +81,17 @@ pub struct MultiAssetData {
     // 前回デイリーボーナスを取得した時間
     pub last_bonus: Mapping<AccountId, u64>,
 
+    // 前回ステーキングした時間
+    pub last_staked: Mapping<AccountId, u64>,
+
     // アカウントが保持しているリンゴの数
     pub apple_number: Mapping<AccountId, u16>,
 
     // アカウントが保持しているゲーム内通貨
     pub your_money: Mapping<AccountId, u64>,
+
+    // ステーキングしているゲーム内通貨
+    pub your_staked_money: Mapping<AccountId, u64>,
 
     
 }
@@ -419,6 +425,34 @@ where
             .your_money
             .insert(account_id, &after_money);
         Ok(())
+    }
+
+    fn stake_your_money(&mut self, account_id: AccountId) -> Result<()> {
+
+        //　get the current time
+        let current_time = Self::env().block_timestamp();
+
+        let current_money = self.get_your_money(account_id.clone());
+
+        if current_money == 0 {
+            Err(RmrkError::NotEnoughMoney.into())
+        } else {
+            // set your_money 0
+            self.data::<MultiAssetData>()
+                .your_money
+                .insert(account_id, &0);
+
+            // set your_staked_money
+            self.data::<MultiAssetData>()
+                .your_staked_money
+                .insert(account_id, &current_money);
+
+            // set last_staked
+            self.data::<MultiAssetData>()
+                .last_staked
+                .insert(account_id, &current_time);
+            Ok(())
+        }
     }
 
 
