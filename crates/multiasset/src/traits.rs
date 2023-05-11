@@ -19,6 +19,8 @@ pub type MultiAssetRef = dyn MultiAsset;
 /// Trait definitions for MultiAsset ink! messages
 #[openbrush::trait_definition]
 pub trait MultiAsset {
+    #[ink(message)]
+    fn set_default(&mut self, account_id: AccountId) -> Result<()>;
     
     #[ink(message)]
     fn set_status(
@@ -89,6 +91,9 @@ pub trait MultiAsset {
 
     #[ink(message)]
     fn get_your_apple(&self, account_id: AccountId) -> u16;
+
+    #[ink(message)]
+    fn set_your_apple(&mut self, account_id: AccountId, after_money: u16) -> Result<()>;
 
     #[ink(message)]
     fn get_your_money(&self, account_id: AccountId) -> u64;

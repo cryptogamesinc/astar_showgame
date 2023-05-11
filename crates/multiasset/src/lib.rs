@@ -99,6 +99,15 @@ where
 {
     /// Used to add a asset entry.
     /// 
+    /// 
+    fn set_default(&mut self, account_id: AccountId) -> Result<()> {
+        self.set_bad_uri(String::from("ipfs://QmYJhYes1kzp2soWYEYKzvA84V8YivL8BCpsnN773xyufr/"))?;
+        self.set_normal_uri(String::from("ipfs://QmXtnr9aEJVywiLs1keZdyiKbQwignZT3FhwKYivF15oZp/"))?;
+        self.set_good_uri(String::from("ipfs://QmZAdpKf4zr9x2vX26gU6LkG8gtj44GhoGMbWJAa2HsVzt/"))?;
+        self.set_your_apple(account_id, 10)?;
+        self.set_your_money(account_id, 500)?;
+    Ok(())
+}
     fn set_status (
         &mut self,
         token_id: Id, 
@@ -389,6 +398,14 @@ where
             .get(&account_id)
             .unwrap_or_default()
     }
+
+    fn set_your_apple(&mut self, account_id: AccountId, after_apple: u16) -> Result<()> {
+        self.data::<MultiAssetData>()
+            .apple_number
+            .insert(account_id, &after_apple);
+        Ok(())
+    }
+
 
     fn get_your_money(&self, account_id: AccountId) -> u64 {
         self.data::<MultiAssetData>()
