@@ -432,21 +432,27 @@ where
         //　get the current time
         let current_time = Self::env().block_timestamp();
 
+        //　get the current money
         let current_money = self.get_your_money(account_id.clone());
+
+        //　get the current staked money
+        let current_staked_money = self.get_your_staked_money(account_id.clone());
 
         if current_money == 0 || current_money < stake_money {
             Err(RmrkError::NotEnoughMoney.into())
         } else {
-            let money_left = current_money - stake_money;
+            let after_money = current_money - stake_money;
+
+            let after_staked_money = current_staked_money + stake_money;
             // set your_money 0
             self.data::<MultiAssetData>()
                 .your_money
-                .insert(account_id, &money_left);
+                .insert(account_id, &after_money);
 
             // set your_staked_money
             self.data::<MultiAssetData>()
                 .your_staked_money
-                .insert(account_id, &stake_money);
+                .insert(account_id, &after_staked_money);
 
             // set last_staked
             self.data::<MultiAssetData>()
