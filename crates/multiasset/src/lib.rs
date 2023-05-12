@@ -427,25 +427,26 @@ where
         Ok(())
     }
 
-    fn stake_your_money(&mut self, account_id: AccountId) -> Result<()> {
+    fn stake_your_money(&mut self, account_id: AccountId, stake_money: u64) -> Result<()> {
 
         //　get the current time
         let current_time = Self::env().block_timestamp();
 
         let current_money = self.get_your_money(account_id.clone());
 
-        if current_money == 0 {
+        if current_money == 0 || current_money < stake_money {
             Err(RmrkError::NotEnoughMoney.into())
         } else {
+            let money_left = current_money - stake_money;
             // set your_money 0
             self.data::<MultiAssetData>()
                 .your_money
-                .insert(account_id, &0);
+                .insert(account_id, &money_left);
 
             // set your_staked_money
             self.data::<MultiAssetData>()
                 .your_staked_money
-                .insert(account_id, &current_money);
+                .insert(account_id, &stake_money);
 
             // set last_staked
             self.data::<MultiAssetData>()
@@ -455,6 +456,55 @@ where
         }
     }
 
+    fn get_your_staked_money(&self, account_id: AccountId) -> u64 {
+
+        //　get the current time
+        let current_time = Self::env().block_timestamp();
+
+        // get your_staked_money
+        let staked_money = self.data::<MultiAssetData>()
+            .your_staked_money
+            .get(&account_id)
+            .unwrap_or(Default::default());
+
+        // get last_staked_time
+        let last_staked_time = self.data::<MultiAssetData>()
+            .last_staked
+            .get(&account_id)
+            .unwrap_or(Default::default());
+        if last_staked_time == 0 || staked_money == 0 {
+            return 0
+        } else {
+            let past_time = current_time - last_staked_time;
+            // 60 seconds（60 ※ 1000 miliseconds）
+            let past_day = past_time / (10 * 1000) ;
+            // Assuming a hypothetical decrease of 5 per unit
+            let change_patio = past_day * 1;
+            return staked_money + staked_money * change_patio / 100
+        }
+    }
+
+    fn withdraw_your_money(&mut self, account_id: AccountId) -> Result<()> {
+        let staked_money = self.get_your_staked_money(account_id);
+
+        let current_money = self.get_your_money(account_id.clone());
+
+        if staked_money == 0 {
+            Err(RmrkError::NotEnoughMoney.into())
+        } else {
+            let result_money = current_money + staked_money;
+            // set your_staked_money 0
+            self.data::<MultiAssetData>()
+            .your_staked_money
+            .insert(account_id, &0);
+
+            // set your_money 
+            self.data::<MultiAssetData>()
+                .your_money
+                .insert(account_id, &result_money);
+            Ok(())
+        }
+    }
 
     fn buy_an_apple(&mut self, account_id: AccountId) -> Result<()>{
 
