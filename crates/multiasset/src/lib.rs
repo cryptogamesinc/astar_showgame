@@ -6,6 +6,8 @@
 pub mod internal;
 pub mod traits;
 
+// use my_psp22_mintable::ContractRef;
+
 use internal::Internal;
 
 use ink::prelude::string::ToString;
@@ -48,6 +50,7 @@ pub const STORAGE_MULTIASSET_KEY: u32 = openbrush::storage_unique_key!(MultiAsse
 
 #[derive(Default, Debug)]
 #[openbrush::upgradeable_storage(STORAGE_MULTIASSET_KEY)]
+
 pub struct MultiAssetData {
     /// Mapping of available asset entries for this collection
     pub collection_asset_entries: Mapping<AssetId, Asset>,
@@ -106,6 +109,13 @@ where
     /// Used to add a asset entry.
     /// 
     /// 
+    /// 
+    // fn test(&mut self, psp22:AccountId) -> bool{
+    //     // let mut interface: PSP22Ref = ink::env::call::FromAccountId::from_account_id(psp22);
+    //     psp22.transfer();
+    //     return true;
+    // }
+
     fn set_default(&mut self, account_id: AccountId) -> Result<()> {
         self.set_bad_uri(String::from("ipfs://QmYJhYes1kzp2soWYEYKzvA84V8YivL8BCpsnN773xyufr/"))?;
         self.set_normal_uri(String::from("ipfs://QmXtnr9aEJVywiLs1keZdyiKbQwignZT3FhwKYivF15oZp/"))?;

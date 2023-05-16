@@ -144,6 +144,9 @@ pub trait MultiAsset {
     fn is_account_id(&self, account_id: AccountId) -> bool;
 
     // #[ink(message)]
+    // fn test(&mut self, psp22:AccountId) -> bool;
+
+    // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;
 
     /// Used to add a asset entry.

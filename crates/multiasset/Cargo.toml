@@ -12,6 +12,8 @@ openbrush = { tag = "3.0.0", git = "https://github.com/727-Ventures/openbrush-co
 
 rmrk_common = { path = "../common", default-features = false }
 
+my_psp22_mintable = { version = "3.0.0", path = "../../../openbrush-contracts/examples/psp22_extensions/mintable", default-features = false, features = ["ink-as-dependency"] }
+
 [lib]
 path = "src/lib.rs"
 crate-type = ["rlib"]
