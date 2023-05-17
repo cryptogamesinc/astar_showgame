@@ -13,6 +13,8 @@ use openbrush::{
     },
 };
 
+use openbrush::traits::Balance;
+
 #[openbrush::wrapper]
 pub type MultiAssetRef = dyn MultiAsset;
 
@@ -144,9 +146,6 @@ pub trait MultiAsset {
     fn is_account_id(&self, account_id: AccountId) -> bool;
 
     // #[ink(message)]
-    // fn test(&mut self, psp22:AccountId) -> bool;
-
-    // #[ink(message)]
     // fn test2(&mut self, token_id: Id) -> Result<()>;
 
     /// Used to add a asset entry.
@@ -260,6 +259,9 @@ pub trait MultiAsset {
 
     /// Check that asset id does not already exist.
     fn ensure_asset_id_is_available(&self, asset_id: AssetId) -> Result<()>;
+
+    #[ink(message)]
+    fn call_psp22_transfer(&mut self, target_account_id:AccountId, to: AccountId, value: Balance, data: Vec<u8>);
 }
 
 /// Trait definitions for MultiAsset ink events

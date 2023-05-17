@@ -6,11 +6,12 @@
 pub mod internal;
 pub mod traits;
 
-// use my_psp22_mintable::ContractRef;
-
 use internal::Internal;
 
 use ink::prelude::string::ToString;
+
+use my_psp22_mintable::{ ContractRef};
+use openbrush::traits::Balance;
 
 
 use rmrk_common::{
@@ -109,13 +110,6 @@ where
     /// Used to add a asset entry.
     /// 
     /// 
-    /// 
-    // fn test(&mut self, psp22:AccountId) -> bool{
-    //     // let mut interface: PSP22Ref = ink::env::call::FromAccountId::from_account_id(psp22);
-    //     psp22.transfer();
-    //     return true;
-    // }
-
     fn set_default(&mut self, account_id: AccountId) -> Result<()> {
         self.set_bad_uri(String::from("ipfs://QmYJhYes1kzp2soWYEYKzvA84V8YivL8BCpsnN773xyufr/"))?;
         self.set_normal_uri(String::from("ipfs://QmXtnr9aEJVywiLs1keZdyiKbQwignZT3FhwKYivF15oZp/"))?;
@@ -200,6 +194,15 @@ where
                 happy: new_happy_status,
             });
         }
+    }
+
+    // fn call_psp22(&mut self) {
+
+    // }
+    fn call_psp22_transfer(&mut self, target_account_id:AccountId, to: AccountId, value: Balance, data: Vec<u8>){
+        let mut interface: ContractRef = ink::env::call::FromAccountId::from_account_id(target_account_id);
+        let from = Self::env().caller();
+        interface.transfer_from_contract(from, to, value, data);
     }
 
     fn add_twenty(&mut self, token_id: Id) -> Result<()> {
