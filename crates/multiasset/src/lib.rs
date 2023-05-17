@@ -199,10 +199,24 @@ where
     // fn call_psp22(&mut self) {
 
     // }
-    fn call_psp22_transfer(&mut self, target_account_id:AccountId, to: AccountId, value: Balance, data: Vec<u8>){
+    fn call_psp22_transfer(&mut self, target_account_id:AccountId, to: AccountId, value: Balance, data: Vec<u8>) -> Result<()>{
         let mut interface: ContractRef = ink::env::call::FromAccountId::from_account_id(target_account_id);
         let from = Self::env().caller();
         interface.transfer_from_contract(from, to, value, data);
+        Ok(())
+    }
+
+    fn buy_game_money(&mut self, target_account_id:AccountId, to: AccountId, data: Vec<u8>) -> Result<()>{
+        let mut interface: ContractRef = ink::env::call::FromAccountId::from_account_id(target_account_id);
+        let from = Self::env().caller();
+        let money = interface.balance_of_contract(from);
+        if money < 500 {
+            Err(RmrkError::NotEnoughMoney.into())
+        } else {
+            self.call_psp22_transfer(target_account_id, to, 500, data);
+            self.plus_your_money(from, 300);
+            Ok(())
+        }
     }
 
     fn add_twenty(&mut self, token_id: Id) -> Result<()> {
@@ -903,3 +917,4 @@ where
     /// Used to notify listeners that token's prioritiy array is reordered.
     default fn _emit_asset_priority_set_event(&self, _token_id: &Id, _priorities: Vec<AssetId>) {}
 }
+

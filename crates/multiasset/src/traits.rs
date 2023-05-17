@@ -261,7 +261,10 @@ pub trait MultiAsset {
     fn ensure_asset_id_is_available(&self, asset_id: AssetId) -> Result<()>;
 
     #[ink(message)]
-    fn call_psp22_transfer(&mut self, target_account_id:AccountId, to: AccountId, value: Balance, data: Vec<u8>);
+    fn call_psp22_transfer(&mut self, target_account_id:AccountId, to: AccountId, value: Balance, data: Vec<u8>) -> Result<()>;
+
+    #[ink(message)]
+    fn buy_game_money(&mut self, target_account_id:AccountId, to: AccountId, data: Vec<u8>) -> Result<()>;
 }
 
 /// Trait definitions for MultiAsset ink events
