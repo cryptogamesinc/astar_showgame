@@ -521,6 +521,8 @@ pub mod rmrk_example_equippable {
         fn set_sender(sender: AccountId) {
             ink::env::test::set_caller::<Environment>(sender);
         }
+
+        // money test
         #[ink::test]
         fn set_and_get_your_money_works() {
             let accounts = default_accounts();
@@ -557,6 +559,31 @@ pub mod rmrk_example_equippable {
             // 新しいURIが正しく設定されていることを確認します。
             assert_eq!(rmrk.get_normal_uri(), new_test_url_bytes);
         }
+
+        // staking test
+        #[ink::test]
+        fn staking_your_money_works() {
+            let mut rmrk = init();
+            let accounts = default_accounts();
+
+            // Assume we start with some initial money
+            let initial_money: u64 = 1000;
+            assert!(rmrk.set_your_money(accounts.alice, initial_money).is_ok());
+
+            // Alice decides to stake some of her money
+            let stake_money: u64 = 400;
+            assert!(rmrk.stake_your_money(accounts.alice, stake_money).is_ok());
+
+            // Check if the money has been correctly staked
+            let remaining_money = rmrk.get_your_money(accounts.alice);
+
+            assert_eq!(remaining_money, initial_money - stake_money);
+
+            // Now, Alice tries to stake more money than she has
+            let too_much_money: u64 = 10000;
+            assert!(rmrk.stake_your_money(accounts.alice, too_much_money).is_err());
+        }
         
     }
 }
+// 
