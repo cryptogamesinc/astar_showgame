@@ -453,6 +453,8 @@ pub mod rmrk_example_equippable {
             utils::Utils,
         };
 
+        use rmrk::traits::MultiAsset;
+        
         const BASE_URI: &str = "ipfs://myIpfsUri/";
         const MAX_SUPPLY: u64 = 10;
 
@@ -518,6 +520,20 @@ pub mod rmrk_example_equippable {
 
         fn set_sender(sender: AccountId) {
             ink::env::test::set_caller::<Environment>(sender);
+        }
+        #[ink::test]
+        fn set_and_get_your_money_works() {
+            let accounts = default_accounts();
+            let mut rmrk = init();
+
+            let initial_money = rmrk.get_your_money(accounts.alice);
+            assert_eq!(initial_money, 0); // ここでは初期状態として0を想定します。
+
+            let after_money: u64 = 1000;
+            assert!(rmrk.set_your_money(accounts.alice, after_money).is_ok());
+
+            let money_after_setting = rmrk.get_your_money(accounts.alice);
+            assert_eq!(money_after_setting, after_money);
         }
     }
 }
