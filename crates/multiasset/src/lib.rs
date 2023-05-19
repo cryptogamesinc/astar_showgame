@@ -76,25 +76,25 @@ pub struct MultiAssetData {
     pub good_uri: String,
     pub bad_uri: String,
 
-    // ランダム用
+    // for random
     pub salt: u64,
 
-    // 前回食べた時間
+    // last eaten time
     pub last_eaten: Mapping<Id, u64>,
 
-    // 前回デイリーボーナスを取得した時間
+    // last daily bonus time
     pub last_bonus: Mapping<AccountId, u64>,
 
-    // 前回ステーキングした時間
+    // last staked time
     pub last_staked: Mapping<AccountId, u64>,
 
-    // アカウントが保持しているリンゴの数
+    // apple number the account has
     pub apple_number: Mapping<AccountId, u16>,
 
-    // アカウントが保持しているゲーム内通貨
+    // game money the account has
     pub your_money: Mapping<AccountId, u64>,
 
-    // ステーキングしているゲーム内通貨
+    // staked game noney the account has
     pub your_staked_money: Mapping<AccountId, u64>,
 
     
@@ -360,23 +360,22 @@ where
 
     fn eat_an_apple(&mut self, token_id: Id, account_id: AccountId) -> Result<()> {
 
-        // 前回のリンゴを食べた時間を取得。エラーの場合は、０を返す（todo 仮で設定）
+        // get last eaten time
         let last_eaten = self.get_last_eaten(token_id.clone());
-        // 決められた時間が経過したかの関数
+        // get whether time passed
         let has_passed = self.five_minutes_has_passed(last_eaten);
 
-        //  決められた時間が経過していない場合
         if has_passed ==false {
             Err(RmrkError::TimeHasNotPassed.into())
         } else {
-            //　現在時刻取得 
+            // get current time 
             let current_time = Self::env().block_timestamp();
-            //  last_eatenに現在時刻を入れる
+            //  set last eaten time
             self.set_last_eaten(token_id.clone(), current_time)?;
-            //  リンゴの数を減らす
+            //  minus apple
             self.minus_your_apple(account_id)?;
 
-            // 疑似乱数による分岐
+            // branching by pseudo random
             let random = self.get_pseudo_random(100);
             if random < 25 {
                 self.change_some_status(token_id, 30)
@@ -541,10 +540,10 @@ where
 
     fn buy_an_apple(&mut self, account_id: AccountId) -> Result<()>{
 
-        // 仮にリンゴの値段を20とする。エラーの場合は?があるため返る
+        // the apple price is 20
         self.minus_your_money(account_id, 20)?;
 
-        // １個加える
+        // add 1
         let after_apple = self.get_your_apple(account_id) + 1;
 
         self.data::<MultiAssetData>()
@@ -557,7 +556,7 @@ where
 
     fn minus_your_apple(&mut self, account_id: AccountId) -> Result<()> {
         
-        // リンゴの数を取得する
+        // get apple number
         let apple_number = self.get_your_apple(account_id);
 
         if apple_number < 1 {
@@ -574,7 +573,7 @@ where
 
     fn minus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()> {
         
-        // 現在の所有のゲーム内通貨を取得する
+        // get current game money
         let money = self.get_your_money(account_id);
 
         if money < change_money {
@@ -588,7 +587,7 @@ where
 
     fn plus_your_money(&mut self, account_id: AccountId, change_money: u64) -> Result<()> {
         
-        // 現在の所有のゲーム内通貨を取得する
+        // get current game money
         let money = self.get_your_money(account_id);
 
         let after_money = money + change_money;

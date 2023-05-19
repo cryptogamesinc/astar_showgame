@@ -428,7 +428,6 @@ pub mod rmrk_example_equippable {
             Rmrk,
         };
 
-        use ink::env::test::DefaultAccounts;
 
         use openbrush::{
             contracts::{
@@ -524,6 +523,9 @@ pub mod rmrk_example_equippable {
             ink::env::test::set_caller::<Environment>(sender);
         }
 
+        // In the Ink! test environment, Self::env().block_timestamp() always returns 0.
+        // Therefore, functions using time were tested with the actual behavior.
+
         // money test
         #[ink::test]
         fn set_and_get_your_money_works() {
@@ -531,7 +533,7 @@ pub mod rmrk_example_equippable {
             let mut rmrk = init();
 
             let initial_money = rmrk.get_your_money(accounts.alice);
-            assert_eq!(initial_money, 0); // ここでは初期状態として0を想定します。
+            assert_eq!(initial_money, 0); 
 
             let after_money: u64 = 1000;
             assert!(rmrk.set_your_money(accounts.alice, after_money).is_ok());
@@ -545,20 +547,16 @@ pub mod rmrk_example_equippable {
         fn normal_uri_works() {
             let mut rmrk = init();
 
-            // セットアップ: URIを初期値に設定します。
             let test_url = "test_url1";
             let test_url_bytes = test_url.as_bytes().to_vec();
             assert!(rmrk.set_normal_uri(test_url_bytes.clone()).is_ok());
 
-            // 初期URIが正しく設定されていることを確認します。
             assert_eq!(rmrk.get_normal_uri(), test_url_bytes);
 
-            // 新しいURIを設定します。
             let new_test_url = "test_url2";
             let new_test_url_bytes = new_test_url.as_bytes().to_vec();
             assert!(rmrk.set_normal_uri(new_test_url_bytes.clone()).is_ok());
 
-            // 新しいURIが正しく設定されていることを確認します。
             assert_eq!(rmrk.get_normal_uri(), new_test_url_bytes);
         }
 
