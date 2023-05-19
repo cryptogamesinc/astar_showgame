@@ -535,5 +535,28 @@ pub mod rmrk_example_equippable {
             let money_after_setting = rmrk.get_your_money(accounts.alice);
             assert_eq!(money_after_setting, after_money);
         }
+
+        // url test
+        #[ink::test]
+        fn normal_uri_works() {
+            let mut rmrk = init();
+
+            // セットアップ: URIを初期値に設定します。
+            let test_url = "test_url1";
+            let test_url_bytes = test_url.as_bytes().to_vec();
+            assert!(rmrk.set_normal_uri(test_url_bytes.clone()).is_ok());
+
+            // 初期URIが正しく設定されていることを確認します。
+            assert_eq!(rmrk.get_normal_uri(), test_url_bytes);
+
+            // 新しいURIを設定します。
+            let new_test_url = "test_url2";
+            let new_test_url_bytes = new_test_url.as_bytes().to_vec();
+            assert!(rmrk.set_normal_uri(new_test_url_bytes.clone()).is_ok());
+
+            // 新しいURIが正しく設定されていることを確認します。
+            assert_eq!(rmrk.get_normal_uri(), new_test_url_bytes);
+        }
+        
     }
 }
