@@ -428,6 +428,8 @@ pub mod rmrk_example_equippable {
             Rmrk,
         };
 
+        use ink::env::test::DefaultAccounts;
+
         use openbrush::{
             contracts::{
                 access_control::{
@@ -583,6 +585,55 @@ pub mod rmrk_example_equippable {
             let too_much_money: u64 = 10000;
             assert!(rmrk.stake_your_money(accounts.alice, too_much_money).is_err());
         }
+
+        // default test
+        #[ink::test]
+        fn set_default_works() {
+            let accounts = default_accounts();
+            let mut rmrk = init();
+
+            set_sender(accounts.alice);
+            assert!(rmrk.set_default(accounts.alice.clone()).is_ok());
+
+            assert_eq!(rmrk.get_bad_uri(), String::from("ipfs://QmYJhYes1kzp2soWYEYKzvA84V8YivL8BCpsnN773xyufr/"));
+            assert_eq!(rmrk.get_normal_uri(), String::from("ipfs://QmXtnr9aEJVywiLs1keZdyiKbQwignZT3FhwKYivF15oZp/"));
+            assert_eq!(rmrk.get_good_uri(), String::from("ipfs://QmZAdpKf4zr9x2vX26gU6LkG8gtj44GhoGMbWJAa2HsVzt/"));
+            assert_eq!(rmrk.get_your_apple(accounts.alice.clone()), 10);
+            assert_eq!(rmrk.get_your_money(accounts.alice.clone()), 500);
+        }
+
+        // claim test
+        #[ink::test]
+        fn claim_a_nft_works() {
+            // Create new contract instance
+            let mut contract = init();
+            // Caller does not have a NFT, claim should be successful
+            assert_eq!(contract.claim_a_nft().is_ok(), true);
+            // Caller already has a NFT, claim should return an error
+            assert_eq!(contract.claim_a_nft().is_err(), true);
+        }
+
+        // status test
+        #[ink::test]
+        fn set_full_status_works() {
+            let accounts = default_accounts();
+            let mut rmrk = init();
+            let token_id = Id::U64(1); // Assuming token_id is 1
+
+            assert_eq!(rmrk.claim_a_nft().is_ok(), true);
+
+            set_sender(accounts.alice);
+            assert!(rmrk.set_full_status(token_id.clone()).is_ok());
+
+            if let Some(status) = rmrk.get_status(token_id) {
+                assert_eq!(status.health, 100);
+                assert_eq!(status.happy, 100);
+                assert_eq!(status.hungry, 0);
+            } else {
+                panic!("Failed to get status.");
+            }
+        }
+
         
     }
 }

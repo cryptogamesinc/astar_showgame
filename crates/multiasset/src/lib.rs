@@ -116,8 +116,8 @@ where
         self.set_good_uri(String::from("ipfs://QmZAdpKf4zr9x2vX26gU6LkG8gtj44GhoGMbWJAa2HsVzt/"))?;
         self.set_your_apple(account_id, 10)?;
         self.set_your_money(account_id, 500)?;
-    Ok(())
-}
+        Ok(())
+    }
     fn set_status (
         &mut self,
         token_id: Id, 
