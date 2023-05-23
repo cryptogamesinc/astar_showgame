@@ -50,5 +50,30 @@ To run tests:
 yarn
 yarn compile
 yarn test
-````
+```
 
+## 以下、AstarGamesショーゲームのコントラクトの実装方法です。
+
+- 「equippable」フォルダに移動
+
+　cd examples/equippable
+
+- contractのビルド（作成時点でのコマンド）
+
+　cargo +nightly-2023-02-07 contract build
+
+- 使用するファイル
+
+target/ink/rmrk_example_equippable/rmrk_example_equippable.contract
+
+- Substrateにてデプロイ
+
+https://contracts-ui.substrate.io/add-contract
+
+- 初期設定
+
+URLなどのデフォルトを設定するために、以下の関数を実施
+
+multiAsset::setDefault
+
+![](./image.png)
