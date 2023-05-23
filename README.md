@@ -54,23 +54,23 @@ yarn test
 
 ## 以下、AstarGamesショーゲームのコントラクトの実装方法です。
 
-- 「equippable」フォルダに移動
+1. 「equippable」フォルダに移動
 
 　cd examples/equippable
 
-- contractのビルド（作成時点でのコマンド）
+2. contractのビルド（作成時点でのコマンド）
 
 　cargo +nightly-2023-02-07 contract build
 
-- 使用するファイル
+3. 使用するファイル
 
 target/ink/rmrk_example_equippable/rmrk_example_equippable.contract
 
-- Substrateにてデプロイ
+4. Substrateにてデプロイ
 
 https://contracts-ui.substrate.io/add-contract
 
-- 初期設定
+5. 初期設定
 
 URLなどのデフォルトを設定するために、以下の関数を実施
 
