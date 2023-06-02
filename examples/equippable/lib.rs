@@ -593,9 +593,9 @@ pub mod rmrk_example_equippable {
             set_sender(accounts.alice);
             assert!(rmrk.set_default(accounts.alice.clone()).is_ok());
 
-            assert_eq!(rmrk.get_bad_uri(), String::from("ipfs://QmYJhYes1kzp2soWYEYKzvA84V8YivL8BCpsnN773xyufr/"));
-            assert_eq!(rmrk.get_normal_uri(), String::from("ipfs://QmXtnr9aEJVywiLs1keZdyiKbQwignZT3FhwKYivF15oZp/"));
-            assert_eq!(rmrk.get_good_uri(), String::from("ipfs://QmZAdpKf4zr9x2vX26gU6LkG8gtj44GhoGMbWJAa2HsVzt/"));
+            assert_eq!(rmrk.get_bad_uri(), String::from("ipfs://QmV1VxGsrM4MLNn1qwR9Hmu5DGFfWjzHmhHFXpTT2fevMQ/"));
+            assert_eq!(rmrk.get_normal_uri(), String::from("ipfs://QmTBf9GJLiw97v84Q7aEPPFHUXdyqXWC6AUp97VnLFZtWr/"));
+            assert_eq!(rmrk.get_good_uri(), String::from("ipfs://QmQUxL1RSWbZAWhQfWnJJrMVZsPm4Stc5C64kRuSnXe56Q/"));
             assert_eq!(rmrk.get_your_apple(accounts.alice.clone()), 10);
             assert_eq!(rmrk.get_your_money(accounts.alice.clone()), 500);
         }

@@ -111,9 +111,9 @@ where
     /// 
     /// 
     fn set_default(&mut self, account_id: AccountId) -> Result<()> {
-        self.set_bad_uri(String::from("ipfs://QmYJhYes1kzp2soWYEYKzvA84V8YivL8BCpsnN773xyufr/"))?;
-        self.set_normal_uri(String::from("ipfs://QmXtnr9aEJVywiLs1keZdyiKbQwignZT3FhwKYivF15oZp/"))?;
-        self.set_good_uri(String::from("ipfs://QmZAdpKf4zr9x2vX26gU6LkG8gtj44GhoGMbWJAa2HsVzt/"))?;
+        self.set_bad_uri(String::from("ipfs://QmV1VxGsrM4MLNn1qwR9Hmu5DGFfWjzHmhHFXpTT2fevMQ/"))?;
+        self.set_normal_uri(String::from("ipfs://QmTBf9GJLiw97v84Q7aEPPFHUXdyqXWC6AUp97VnLFZtWr/"))?;
+        self.set_good_uri(String::from("ipfs://QmQUxL1RSWbZAWhQfWnJJrMVZsPm4Stc5C64kRuSnXe56Q/"))?;
         self.set_your_apple(account_id, 10)?;
         self.set_your_money(account_id, 500)?;
         Ok(())
